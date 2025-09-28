@@ -1,6 +1,6 @@
 'use client';
 
-import { Palette, Layers3, Settings } from 'lucide-react';
+import { BookOpen, Layers3, Settings } from 'lucide-react';
 
 export function Header() {
   return (
@@ -9,10 +9,10 @@ export function Header() {
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-2">
             <Layers3 className="w-6 h-6 text-blue-400" />
-            <h1 className="text-xl font-bold text-white">3D Product Studio</h1>
+            <h1 className="text-xl font-bold text-white">3D Bookcase Studio</h1>
           </div>
           <div className="hidden md:block text-sm text-slate-400">
-            Interactive Chair Configurator
+            Interactive Bookcase Configurator
           </div>
         </div>
 

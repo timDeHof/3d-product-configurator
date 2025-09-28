@@ -11,167 +11,176 @@ interface ProductModelProps {
 
 export function ProductModel({ config }: ProductModelProps) {
   const groupRef = useRef<Group>(null);
-  const seatRef = useRef<Mesh>(null);
-  const backrestRef = useRef<Mesh>(null);
-  const legsRef = useRef<Mesh>(null);
 
-  // Create materials and dimensions based on configuration
-  const materials = useMemo(() => {
-    return {
-      seat: {
-        color: config.seatColor,
-        roughness: 0.4,
-        metalness: 0.1
-      },
-      backrest: {
-        color: config.backrestColor,
-        roughness: 0.4,
-        metalness: 0.1
-      },
-      legs: {
-        color: config.legsColor,
-        roughness: 0.2,
-        metalness: 0.8
-      }
-    };
-  }, [config.seatColor, config.backrestColor, config.legsColor]);
+  // Material properties based on selected material
+  const materialProps = useMemo(() => {
+    switch (config.material) {
+      case 'oak':
+        return { color: '#deb887', roughness: 0.8, metalness: 0.1 };
+      case 'walnut':
+        return { color: '#8b4513', roughness: 0.7, metalness: 0.1 };
+      case 'white':
+        return { color: '#f8f9fa', roughness: 0.3, metalness: 0.0 };
+      case 'black':
+        return { color: '#212529', roughness: 0.3, metalness: 0.0 };
+      default:
+        return { color: '#deb887', roughness: 0.8, metalness: 0.1 };
+    }
+  }, [config.material]);
 
-  // Calculate dimensions based on width
+  // Calculate dimensions based on height and width
   const dimensions = useMemo(() => {
+    const heightMultiplier = {
+      small: 0.7,   // 4ft
+      medium: 1.0,  // 6ft
+      large: 1.2    // 7ft
+    }[config.height];
+
     const widthMultiplier = {
-      narrow: 0.8,
+      narrow: 0.7,
       standard: 1.0,
-      wide: 1.3
+      wide: 1.4
     }[config.width];
 
     return {
-      seatWidth: 2.0 * widthMultiplier,
-      seatDepth: 1.8,
-      seatHeight: 0.15,
-      backrestWidth: 2.0 * widthMultiplier,
-      backrestHeight: 2.0,
-      backrestThickness: 0.1
+      height: 4.0 * heightMultiplier,
+      width: 2.5 * widthMultiplier,
+      depth: 1.2,
+      thickness: 0.08
     };
-  }, [config.width]);
+  }, [config.height, config.width]);
 
-  // Get leg geometry based on design
-  const getLegGeometry = (legDesign: string) => {
-    switch (legDesign) {
-      case 'modern':
-        return { args: [0.05, 1.5, 0.05] as [number, number, number], shape: 'box' };
-      case 'classic':
-        return { args: [0.08, 1.5, 32] as [number, number, number], shape: 'cylinder' };
-      case 'industrial':
-        return { args: [0.06, 1.5, 0.06] as [number, number, number], shape: 'box' };
-      default:
-        return { args: [0.05, 1.5, 0.05] as [number, number, number], shape: 'box' };
+  // Door material properties
+  const doorMaterial = useMemo(() => {
+    if (config.doors === 'glass') {
+      return { 
+        color: '#ffffff', 
+        roughness: 0.1, 
+        metalness: 0.0, 
+        transparent: true, 
+        opacity: 0.3 
+      };
     }
-  };
+    return materialProps;
+  }, [config.doors, materialProps]);
 
-  const legGeometry = useMemo(() => getLegGeometry(config.legDesign), [config.legDesign]);
-
-  // Get leg material properties based on design
-  const legMaterialProps = useMemo(() => {
-    switch (config.legDesign) {
-      case 'modern':
-        return { roughness: 0.1, metalness: 0.9 };
-      case 'classic':
-        return { roughness: 0.6, metalness: 0.2 };
-      case 'industrial':
-        return { roughness: 0.3, metalness: 0.7 };
-      default:
-        return { roughness: 0.2, metalness: 0.8 };
-    }
-  }, [config.legDesign]);
-
-  const finalLegMaterial = useMemo(() => ({
-    ...materials.legs,
-    ...legMaterialProps
-  }), [materials.legs, legMaterialProps]);
-
-  // Leg positions based on seat width
-  const legPositions = useMemo(() => {
-    const halfWidth = dimensions.seatWidth / 2 - 0.1;
-    const halfDepth = dimensions.seatDepth / 2 - 0.1;
-    return [
-      [-halfWidth, -0.75, halfDepth],   // front left
-      [halfWidth, -0.75, halfDepth],    // front right
-      [-halfWidth, -0.75, -halfDepth],  // back left
-      [halfWidth, -0.75, -halfDepth]    // back right
-    ];
-  }, [dimensions.seatWidth, dimensions.seatDepth]);
+  // Accent color for doors/panels
+  const accentMaterial = useMemo(() => ({
+    color: config.accentColor,
+    roughness: 0.4,
+    metalness: 0.2
+  }), [config.accentColor]);
 
   // Subtle animation
   useFrame((state) => {
     if (groupRef.current) {
-      groupRef.current.rotation.y = Math.sin(state.clock.elapsedTime * 0.3) * 0.02;
+      groupRef.current.rotation.y = Math.sin(state.clock.elapsedTime * 0.2) * 0.01;
     }
   });
 
   return (
-    <group ref={groupRef} position={[0, 0, 0]} scale={1.2}>
-      {/* Chair Seat */}
-      <mesh ref={seatRef} position={[0, 0, 0]} castShadow receiveShadow>
-        <boxGeometry args={[dimensions.seatWidth, dimensions.seatHeight, dimensions.seatDepth]} />
-        <meshStandardMaterial 
-          {...materials.seat}
-          transparent={false}
-        />
+    <group ref={groupRef} position={[0, 0, 0]} scale={0.8}>
+      {/* Main Frame - Left Side */}
+      <mesh position={[-dimensions.width/2, 0, 0]} castShadow receiveShadow>
+        <boxGeometry args={[dimensions.thickness, dimensions.height, dimensions.depth]} />
+        <meshStandardMaterial {...materialProps} />
       </mesh>
 
-      {/* Chair Backrest */}
-      <mesh 
-        ref={backrestRef} 
-        position={[0, 1.0, -dimensions.seatDepth/2 + dimensions.backrestThickness/2]} 
-        castShadow 
-        receiveShadow
-      >
-        <boxGeometry args={[dimensions.backrestWidth, dimensions.backrestHeight, dimensions.backrestThickness]} />
-        <meshStandardMaterial 
-          {...materials.backrest}
-          transparent={false}
-        />
+      {/* Main Frame - Right Side */}
+      <mesh position={[dimensions.width/2, 0, 0]} castShadow receiveShadow>
+        <boxGeometry args={[dimensions.thickness, dimensions.height, dimensions.depth]} />
+        <meshStandardMaterial {...materialProps} />
       </mesh>
 
-      {/* Chair Legs */}
-      {legPositions.map((position, i) => (
-        <mesh 
-          key={i}
-          ref={i === 0 ? legsRef : undefined}
-          position={position as [number, number, number]}
-          castShadow
-        >
-          {legGeometry.shape === 'cylinder' ? (
-            <cylinderGeometry args={legGeometry.args as [number, number, number]} />
-          ) : (
-            <boxGeometry args={legGeometry.args} />
-          )}
-          <meshStandardMaterial 
-            {...finalLegMaterial}
-            transparent={false}
-          />
+      {/* Main Frame - Top */}
+      <mesh position={[0, dimensions.height/2, 0]} castShadow receiveShadow>
+        <boxGeometry args={[dimensions.width, dimensions.thickness, dimensions.depth]} />
+        <meshStandardMaterial {...materialProps} />
+      </mesh>
+
+      {/* Main Frame - Bottom */}
+      <mesh position={[0, -dimensions.height/2, 0]} castShadow receiveShadow>
+        <boxGeometry args={[dimensions.width, dimensions.thickness, dimensions.depth]} />
+        <meshStandardMaterial {...materialProps} />
+      </mesh>
+
+      {/* Back Panel (if enabled) */}
+      {config.backPanel && (
+        <mesh position={[0, 0, -dimensions.depth/2 + dimensions.thickness/2]} castShadow receiveShadow>
+          <boxGeometry args={[dimensions.width - dimensions.thickness, dimensions.height - dimensions.thickness, dimensions.thickness]} />
+          <meshStandardMaterial {...materialProps} />
         </mesh>
-      ))}
+      )}
 
-      {/* Seat Cushion Detail */}
-      <mesh position={[0, 0.08, 0]} castShadow>
-        <boxGeometry args={[dimensions.seatWidth - 0.1, 0.05, dimensions.seatDepth - 0.1]} />
-        <meshStandardMaterial 
-          color={config.seatColor}
-          roughness={0.6}
-        />
-      </mesh>
+      {/* Adjustable Shelves */}
+      {config.shelfPositions.map((position, index) => {
+        const yPos = (position - 0.5) * (dimensions.height - dimensions.thickness);
+        return (
+          <mesh 
+            key={index}
+            position={[0, yPos, 0]} 
+            castShadow 
+            receiveShadow
+          >
+            <boxGeometry args={[dimensions.width - dimensions.thickness * 2, dimensions.thickness, dimensions.depth - dimensions.thickness]} />
+            <meshStandardMaterial {...materialProps} />
+          </mesh>
+        );
+      })}
 
-      {/* Backrest Cushion Detail */}
-      <mesh 
-        position={[0, 1.0, -dimensions.seatDepth/2 + 0.08]} 
-        castShadow
-      >
-        <boxGeometry args={[dimensions.backrestWidth - 0.1, dimensions.backrestHeight - 0.1, 0.05]} />
-        <meshStandardMaterial 
-          color={config.backrestColor}
-          roughness={0.6}
-        />
+      {/* Doors (if enabled) */}
+      {config.doors !== 'none' && (
+        <>
+          {/* Left Door */}
+          <mesh 
+            position={[-dimensions.width/4, -dimensions.height/4, dimensions.depth/2 - dimensions.thickness/2]} 
+            castShadow 
+            receiveShadow
+          >
+            <boxGeometry args={[dimensions.width/2 - dimensions.thickness, dimensions.height/2 - dimensions.thickness, dimensions.thickness]} />
+            <meshStandardMaterial {...doorMaterial} />
+          </mesh>
+
+          {/* Right Door */}
+          <mesh 
+            position={[dimensions.width/4, -dimensions.height/4, dimensions.depth/2 - dimensions.thickness/2]} 
+            castShadow 
+            receiveShadow
+          >
+            <boxGeometry args={[dimensions.width/2 - dimensions.thickness, dimensions.height/2 - dimensions.thickness, dimensions.thickness]} />
+            <meshStandardMaterial {...doorMaterial} />
+          </mesh>
+
+          {/* Door Handles */}
+          <mesh position={[-dimensions.width/4 + 0.15, -dimensions.height/4, dimensions.depth/2]} castShadow>
+            <cylinderGeometry args={[0.02, 0.02, 0.1]} />
+            <meshStandardMaterial {...accentMaterial} />
+          </mesh>
+          <mesh position={[dimensions.width/4 - 0.15, -dimensions.height/4, dimensions.depth/2]} castShadow>
+            <cylinderGeometry args={[0.02, 0.02, 0.1]} />
+            <meshStandardMaterial {...accentMaterial} />
+          </mesh>
+        </>
+      )}
+
+      {/* Side Panel Accents (if no doors or accent color is different) */}
+      {(config.doors === 'none' || config.accentColor !== materialProps.color) && (
+        <>
+          <mesh position={[-dimensions.width/2 - dimensions.thickness/2, 0, 0]} castShadow receiveShadow>
+            <boxGeometry args={[dimensions.thickness/2, dimensions.height - dimensions.thickness, dimensions.depth - dimensions.thickness]} />
+            <meshStandardMaterial {...accentMaterial} />
+          </mesh>
+          <mesh position={[dimensions.width/2 + dimensions.thickness/2, 0, 0]} castShadow receiveShadow>
+            <boxGeometry args={[dimensions.thickness/2, dimensions.height - dimensions.thickness, dimensions.depth - dimensions.thickness]} />
+            <meshStandardMaterial {...accentMaterial} />
+          </mesh>
+        </>
+      )}
+
+      {/* Base Support */}
+      <mesh position={[0, -dimensions.height/2 - 0.05, 0]} castShadow receiveShadow>
+        <boxGeometry args={[dimensions.width + 0.1, 0.1, dimensions.depth + 0.1]} />
+        <meshStandardMaterial {...materialProps} />
       </mesh>
     </group>
   );

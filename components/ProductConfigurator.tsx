@@ -9,21 +9,27 @@ import { LoadingSpinner } from './LoadingSpinner';
 import { Header } from './Header';
 
 export interface ProductConfig {
-  seatColor: string;
-  backrestColor: string;
-  legsColor: string;
-  legDesign: 'modern' | 'classic' | 'industrial';
+  height: 'small' | 'medium' | 'large';
   width: 'narrow' | 'standard' | 'wide';
+  shelves: number;
+  shelfPositions: number[];
+  material: 'oak' | 'walnut' | 'white' | 'black';
+  backPanel: boolean;
+  doors: 'none' | 'glass' | 'wooden';
+  accentColor: string;
   environment: 'studio' | 'sunset' | 'forest';
 }
 
 export function ProductConfigurator() {
   const [config, setConfig] = useState<ProductConfig>({
-    seatColor: '#ff6b6b',
-    backrestColor: '#4dabf7',
-    legsColor: '#333333',
-    legDesign: 'modern',
+    height: 'medium',
     width: 'standard',
+    shelves: 5,
+    shelfPositions: [0.2, 0.4, 0.6, 0.8, 1.0],
+    material: 'oak',
+    backPanel: true,
+    doors: 'none',
+    accentColor: '#4dabf7',
     environment: 'studio'
   });
 
