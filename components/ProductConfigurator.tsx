@@ -9,19 +9,21 @@ import { LoadingSpinner } from './LoadingSpinner';
 import { Header } from './Header';
 
 export interface ProductConfig {
-  upperColor: string;
-  soleColor: string;
-  lacesColor: string;
-  material: 'leather' | 'canvas' | 'mesh';
+  seatColor: string;
+  backrestColor: string;
+  legsColor: string;
+  legDesign: 'modern' | 'classic' | 'industrial';
+  width: 'narrow' | 'standard' | 'wide';
   environment: 'studio' | 'sunset' | 'forest';
 }
 
 export function ProductConfigurator() {
   const [config, setConfig] = useState<ProductConfig>({
-    upperColor: '#ff6b6b',
-    soleColor: '#ffffff',
-    lacesColor: '#333333',
-    material: 'leather',
+    seatColor: '#ff6b6b',
+    backrestColor: '#4dabf7',
+    legsColor: '#333333',
+    legDesign: 'modern',
+    width: 'standard',
     environment: 'studio'
   });
 

@@ -5,9 +5,9 @@ import { Inter } from 'next/font/google';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: '3D Product Configurator | Interactive Design Studio',
-  description: 'Professional 3D product configurator built with React, Three.js, and Next.js. Customize products in real-time with advanced 3D visualization.',
-  keywords: '3D configurator, product customization, Three.js, React, interactive design',
+  title: '3D Chair Configurator | Interactive Design Studio',
+  description: 'Professional 3D chair configurator built with React, Three.js, and Next.js. Customize chairs in real-time with advanced 3D visualization.',
+  keywords: '3D configurator, chair customization, furniture design, Three.js, React, interactive design',
 };
 
 export default function RootLayout({

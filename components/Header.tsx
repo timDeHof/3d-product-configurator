@@ -12,7 +12,7 @@ export function Header() {
             <h1 className="text-xl font-bold text-white">3D Product Studio</h1>
           </div>
           <div className="hidden md:block text-sm text-slate-400">
-            Interactive Product Configurator
+            Interactive Chair Configurator
           </div>
         </div>
 

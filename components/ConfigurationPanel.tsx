@@ -26,9 +26,15 @@ const colorOptions = [
 ];
 
 const materialOptions = [
-  { name: 'Leather', value: 'leather' as const },
-  { name: 'Canvas', value: 'canvas' as const },
-  { name: 'Mesh', value: 'mesh' as const }
+  { name: 'Modern', value: 'modern' as const },
+  { name: 'Classic', value: 'classic' as const },
+  { name: 'Industrial', value: 'industrial' as const }
+];
+
+const widthOptions = [
+  { name: 'Narrow', value: 'narrow' as const },
+  { name: 'Standard', value: 'standard' as const },
+  { name: 'Wide', value: 'wide' as const }
 ];
 
 const environmentOptions = [
@@ -44,10 +50,11 @@ export function ConfigurationPanel({ config, onConfigChange }: ConfigurationPane
 
   const resetConfiguration = () => {
     onConfigChange({
-      upperColor: '#ff6b6b',
-      soleColor: '#ffffff',
-      lacesColor: '#333333',
-      material: 'leather',
+      seatColor: '#ff6b6b',
+      backrestColor: '#4dabf7',
+      legsColor: '#333333',
+      legDesign: 'modern',
+      width: 'standard',
       environment: 'studio'
     });
   };
@@ -95,46 +102,69 @@ export function ConfigurationPanel({ config, onConfigChange }: ConfigurationPane
             <h3 className="text-lg font-medium text-white mb-4">Colors</h3>
             
             <ColorPicker
-              label="Upper Material"
-              value={config.upperColor}
-              onChange={(color) => updateConfig({ upperColor: color })}
+              label="Seat"
+              value={config.seatColor}
+              onChange={(color) => updateConfig({ seatColor: color })}
             />
 
             <ColorPicker
-              label="Sole"
-              value={config.soleColor}
-              onChange={(color) => updateConfig({ soleColor: color })}
+              label="Backrest"
+              value={config.backrestColor}
+              onChange={(color) => updateConfig({ backrestColor: color })}
             />
 
             <ColorPicker
-              label="Laces"
-              value={config.lacesColor}
-              onChange={(color) => updateConfig({ lacesColor: color })}
+              label="Legs"
+              value={config.legsColor}
+              onChange={(color) => updateConfig({ legsColor: color })}
             />
           </div>
         </Card>
 
-        {/* Material Selection */}
+        {/* Leg Design Selection */}
         <Card className="bg-slate-700/50 border-slate-600 p-4">
           <div className="space-y-4">
-            <h3 className="text-lg font-medium text-white">Material</h3>
+            <h3 className="text-lg font-medium text-white">Design</h3>
             <div className="space-y-2">
-              <Label className="text-sm font-medium text-slate-200">Upper Material</Label>
+              <Label className="text-sm font-medium text-slate-200">Leg Style</Label>
               <Select 
-                value={config.material} 
-                onValueChange={(value: any) => updateConfig({ material: value })}
+                value={config.legDesign} 
+                onValueChange={(value: any) => updateConfig({ legDesign: value })}
               >
                 <SelectTrigger className="bg-slate-600 border-slate-500 text-white">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent className="bg-slate-700 border-slate-600">
-                  {materialOptions.map((material) => (
+                  {materialOptions.map((design) => (
                     <SelectItem 
-                      key={material.value} 
-                      value={material.value}
+                      key={design.value} 
+                      value={design.value}
                       className="text-white hover:bg-slate-600"
                     >
-                      {material.name}
+                      {design.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            
+            <div className="space-y-2">
+              <Label className="text-sm font-medium text-slate-200">Chair Width</Label>
+              <Select 
+                value={config.width} 
+                onValueChange={(value: any) => updateConfig({ width: value })}
+              >
+                <SelectTrigger className="bg-slate-600 border-slate-500 text-white">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent className="bg-slate-700 border-slate-600">
+                  {widthOptions.map((width) => (
+                    <SelectItem 
+                      key={width.value} 
+                      value={width.value}
+                      className="text-white hover:bg-slate-600"
+                    >
+                      {width.name}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -195,11 +225,12 @@ export function ConfigurationPanel({ config, onConfigChange }: ConfigurationPane
         <Card className="bg-slate-700/30 border-slate-600 p-4">
           <h4 className="text-sm font-medium text-slate-200 mb-2">Current Configuration</h4>
           <div className="text-xs text-slate-400 space-y-1">
-            <div>Material: {config.material}</div>
+            <div>Leg Design: {config.legDesign}</div>
+            <div>Width: {config.width}</div>
             <div>Environment: {config.environment}</div>
-            <div>Upper: {config.upperColor}</div>
-            <div>Sole: {config.soleColor}</div>
-            <div>Laces: {config.lacesColor}</div>
+            <div>Seat: {config.seatColor}</div>
+            <div>Backrest: {config.backrestColor}</div>
+            <div>Legs: {config.legsColor}</div>
           </div>
         </Card>
       </div>
