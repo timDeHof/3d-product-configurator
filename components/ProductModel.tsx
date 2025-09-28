@@ -171,7 +171,6 @@ export function ProductModel({ config }: ProductModelProps) {
         <meshStandardMaterial 
           color={config.backrestColor}
           roughness={0.6}
-        roughness: 0.9,
         />
       </mesh>
     </group>
