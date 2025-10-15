@@ -11,6 +11,8 @@ interface ConfigurationPanelProps {
   config: ProductConfig;
   onConfigChange: (config: ProductConfig) => void;
   onClose?: () => void;
+  isOpen?: boolean;
+  onToggle?: () => void;
 }
 
 const colorOptions = [
@@ -63,7 +65,7 @@ const sofaTypeOptions = [
   { name: 'Two Seater', value: 'two-seater' as const }
 ];
 
-export function ConfigurationPanel({ config, onConfigChange, onClose }: ConfigurationPanelProps) {
+export function ConfigurationPanel({ config, onConfigChange, onClose, isOpen = true, onToggle }: ConfigurationPanelProps) {
   const updateConfig = (updates: Partial<ProductConfig>) => {
     onConfigChange({ ...config, ...updates });
   };
@@ -108,6 +110,8 @@ export function ConfigurationPanel({ config, onConfigChange, onClose }: Configur
       </div>
     </div>
   );
+
+  if (!isOpen) return null;
 
   return (
     <div className="w-80 h-full bg-slate-800/95 backdrop-blur-sm border-l border-slate-700 p-4 md:p-6 overflow-y-auto pt-16 md:pt-20">
