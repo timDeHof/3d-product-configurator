@@ -93,7 +93,7 @@ export function Model({ config, ...props }: ProductModelProps & JSX.IntrinsicEle
 
   return (
     <group {...props} dispose={null}>
-      <group position={[0.824, -0.154, 2.008]} rotation={[-Math.PI / 2, 0, 0]} scale={0.062}>
+      <group position={[0.3, -1.3, 0.3]} rotation={[-Math.PI / 2, 0, 0]} scale={0.062}>
         <mesh
           castShadow
           receiveShadow
