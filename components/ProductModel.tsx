@@ -10,7 +10,7 @@ interface ProductModelProps {
 
 export function ProductModel({ config }: ProductModelProps) {
   return (
-    <group position={[0, 0, 0]} rotation={[0, -Math.PI / 4, 0]}>
+    <group position={[-1.5, 0, 2.3]} rotation={[0, -Math.PI / 4, 0]}>
       {config.sofaType === 'corner' ? (
         <CornerSofa config={config} />
       ) : (

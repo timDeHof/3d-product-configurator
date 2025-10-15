@@ -11,6 +11,7 @@ import { type Settings } from './SettingsPanel';
 import { AlertCircle } from 'lucide-react';
 import { Loader } from './Loader';
 
+
 export interface ProductConfig {
   frameColor: string;
   cushionColor: string;
@@ -110,7 +111,7 @@ export function ProductConfigurator() {
               <PerspectiveCamera makeDefault position={[8, 5, 8]} />
 
               {/* Lighting */}
-              <hemisphereLight color='white' intensity={2.3} groundColor='black' />
+              <ambientLight color='white' intensity={2.3} />
               <spotLight
                 position={[-20, 50, 10]}
                 angle={0.12}
