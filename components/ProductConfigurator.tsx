@@ -5,11 +5,11 @@ import { Canvas } from '@react-three/fiber';
 import { OrbitControls, Environment, ContactShadows, PerspectiveCamera, Preload, Grid } from '@react-three/drei';
 import { ConfigurationPanel } from './ConfigurationPanel';
 import { ProductModel } from './ProductModel';
-import { LoadingSpinner } from './LoadingSpinner';
 import { Header } from './Header';
 import { Footer } from './Footer';
 import { type Settings } from './SettingsPanel';
 import { AlertCircle } from 'lucide-react';
+import { Loader } from './Loader';
 
 export interface ProductConfig {
   frameColor: string;
@@ -96,8 +96,9 @@ export function ProductConfigurator() {
           <Canvas
             ref={canvasRef}
             shadows={settings.shadows}
-            camera={{ position: [0, 0, 8], fov: 50 }}
+            camera={{ position: [8, 5, 8], fov: 35 }}
             gl={{
+              preserveDrawingBuffer: true,
               antialias: settings.quality !== 'low',
               alpha: false,
               powerPreference: settings.quality === 'high' ? 'high-performance' : 'default'
@@ -105,19 +106,19 @@ export function ProductConfigurator() {
             onCreated={() => setIsLoading(false)}
             onError={() => setHasError(true)}
           >
-            <Suspense fallback={null}>
-              <PerspectiveCamera makeDefault position={[0, 0, 8]} />
+            <Suspense fallback={<Loader />}>
+              <PerspectiveCamera makeDefault position={[8, 5, 8]} />
 
               {/* Lighting */}
-              <ambientLight intensity={0.4} />
+              <hemisphereLight color='white' intensity={2.3} groundColor='black' />
               <spotLight
-                position={[10, 10, 10]}
-                angle={0.15}
+                position={[-20, 50, 10]}
+                angle={0.12}
                 penumbra={1}
                 intensity={1}
                 castShadow
-                shadow-mapSize-width={2048}
-                shadow-mapSize-height={2048}
+                shadow-mapSize-width={1024}
+                shadow-mapSize-height={1024}
               />
               <pointLight position={[-10, -10, -10]} intensity={0.5} />
 
@@ -163,10 +164,11 @@ export function ProductConfigurator() {
                 enablePan={false}
                 enableZoom={true}
                 enableRotate={true}
-                minDistance={4}
-                maxDistance={12}
+                minDistance={6}
+                maxDistance={20}
                 minPolarAngle={Math.PI / 8}
                 maxPolarAngle={Math.PI / 2}
+                target={[0, 0, 0]}
                 autoRotate={settings.autoRotate && !settings.reducedMotion}
                 autoRotateSpeed={settings.autoRotateSpeed}
               />
@@ -175,7 +177,7 @@ export function ProductConfigurator() {
             </Suspense>
           </Canvas>
 
-          {isLoading && <LoadingSpinner />}
+
           {hasError && <ErrorFallback />}
 
           {/* Mobile Panel Toggle */}
