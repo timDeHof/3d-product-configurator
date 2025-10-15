@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+  <rect width="32" height="32" fill="#4f46e5" rx="4"/>
+  <g transform="translate(4, 6)">
+    <!-- 3D Cube -->
+    <path d="M12 2 L20 6 L20 14 L12 18 L4 14 L4 6 Z" fill="#60a5fa" stroke="#ffffff" stroke-width="0.5"/>
+    <path d="M12 2 L20 6 L12 10 L4 6 Z" fill="#93c5fd"/>
+    <path d="M12 10 L20 14 L20 6 L12 2 Z" fill="#3b82f6"/>
+    <path d="M4 6 L12 10 L12 18 L4 14 Z" fill="#1d4ed8"/>
+  </g>
+</svg>
