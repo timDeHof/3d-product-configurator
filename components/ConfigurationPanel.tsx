@@ -10,6 +10,7 @@ import { Download, RotateCcw, Palette } from 'lucide-react';
 interface ConfigurationPanelProps {
   config: ProductConfig;
   onConfigChange: (config: ProductConfig) => void;
+  onClose?: () => void;
 }
 
 const colorOptions = [
@@ -25,41 +26,69 @@ const colorOptions = [
   { name: 'Gray', value: '#868e96', hex: '#868e96' }
 ];
 
-const materialOptions = [
+const frameMaterialOptions = [
+  { name: 'Wood', value: 'wood' as const },
+  { name: 'Metal', value: 'metal' as const },
+  { name: 'Plastic', value: 'plastic' as const }
+];
+
+const cushionMaterialOptions = [
   { name: 'Leather', value: 'leather' as const },
-  { name: 'Canvas', value: 'canvas' as const },
-  { name: 'Mesh', value: 'mesh' as const }
+  { name: 'Fabric', value: 'fabric' as const },
+  { name: 'Denim', value: 'denim' as const },
+  { name: 'Microfiber', value: 'microfiber' as const }
+];
+
+const pillowMaterialOptions = [
+  { name: 'Fabric', value: 'fabric' as const },
+  { name: 'Leather', value: 'leather' as const },
+  { name: 'Denim', value: 'denim' as const },
+  { name: 'Linen', value: 'linen' as const }
 ];
 
 const environmentOptions = [
   { name: 'Studio', value: 'studio' as const },
   { name: 'Sunset', value: 'sunset' as const },
-  { name: 'Forest', value: 'forest' as const }
+  { name: 'Forest', value: 'forest' as const },
+  { name: 'Apartment', value: 'apartment' as const },
+  { name: 'City', value: 'city' as const },
+  { name: 'Dawn', value: 'dawn' as const },
+  { name: 'Lobby', value: 'lobby' as const },
+  { name: 'Park', value: 'park' as const },
+  { name: 'Warehouse', value: 'warehouse' as const }
 ];
 
-export function ConfigurationPanel({ config, onConfigChange }: ConfigurationPanelProps) {
+const sofaTypeOptions = [
+  { name: 'Corner Sofa', value: 'corner' as const },
+  { name: 'Two Seater', value: 'two-seater' as const }
+];
+
+export function ConfigurationPanel({ config, onConfigChange, onClose }: ConfigurationPanelProps) {
   const updateConfig = (updates: Partial<ProductConfig>) => {
     onConfigChange({ ...config, ...updates });
   };
 
   const resetConfiguration = () => {
     onConfigChange({
-      upperColor: '#ff6b6b',
-      soleColor: '#ffffff',
-      lacesColor: '#333333',
-      material: 'leather',
-      environment: 'studio'
+      frameColor: '#8B4513',
+      cushionColor: '#F5F5DC',
+      pillowsColor: '#4A4A4A',
+      frameMaterial: 'wood',
+      cushionMaterial: 'denim',
+      pillowMaterial: 'fabric',
+      environment: 'studio',
+      sofaType: 'corner'
     });
   };
 
-  const ColorPicker = ({ 
-    label, 
-    value, 
-    onChange 
-  }: { 
-    label: string; 
-    value: string; 
-    onChange: (color: string) => void; 
+  const ColorPicker = ({
+    label,
+    value,
+    onChange
+  }: {
+    label: string;
+    value: string;
+    onChange: (color: string) => void;
   }) => (
     <div className="space-y-3">
       <Label className="text-sm font-medium text-slate-200">{label}</Label>
@@ -81,35 +110,48 @@ export function ConfigurationPanel({ config, onConfigChange }: ConfigurationPane
   );
 
   return (
-    <div className="w-80 h-full bg-slate-800/95 backdrop-blur-sm border-l border-slate-700 p-6 overflow-y-auto">
+    <div className="w-80 h-full bg-slate-800/95 backdrop-blur-sm border-l border-slate-700 p-4 md:p-6 overflow-y-auto pt-16 md:pt-20">
       <div className="space-y-8">
         {/* Header */}
-        <div className="flex items-center gap-3">
-          <Palette className="w-6 h-6 text-blue-400" />
-          <h2 className="text-xl font-semibold text-white">Customize</h2>
+        <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center gap-3">
+            <Palette className="w-6 h-6 text-blue-400" />
+            <h2 className="text-xl font-semibold text-white">Customize</h2>
+          </div>
+          {onClose && (
+            <button
+              onClick={onClose}
+              className="md:hidden p-2 rounded-lg bg-slate-700/50 hover:bg-slate-600/50 transition-colors"
+              aria-label="Close panel"
+            >
+              <svg className="w-4 h-4 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          )}
         </div>
 
         {/* Color Customization */}
         <Card className="bg-slate-700/50 border-slate-600 p-4">
           <div className="space-y-6">
             <h3 className="text-lg font-medium text-white mb-4">Colors</h3>
-            
+
             <ColorPicker
-              label="Upper Material"
-              value={config.upperColor}
-              onChange={(color) => updateConfig({ upperColor: color })}
+              label="Frame"
+              value={config.frameColor}
+              onChange={(color) => updateConfig({ frameColor: color })}
             />
 
             <ColorPicker
-              label="Sole"
-              value={config.soleColor}
-              onChange={(color) => updateConfig({ soleColor: color })}
+              label="Cushions"
+              value={config.cushionColor}
+              onChange={(color) => updateConfig({ cushionColor: color })}
             />
 
             <ColorPicker
-              label="Laces"
-              value={config.lacesColor}
-              onChange={(color) => updateConfig({ lacesColor: color })}
+              label="Pillows"
+              value={config.pillowsColor}
+              onChange={(color) => updateConfig({ pillowsColor: color })}
             />
           </div>
         </Card>
@@ -117,24 +159,100 @@ export function ConfigurationPanel({ config, onConfigChange }: ConfigurationPane
         {/* Material Selection */}
         <Card className="bg-slate-700/50 border-slate-600 p-4">
           <div className="space-y-4">
-            <h3 className="text-lg font-medium text-white">Material</h3>
+            <h3 className="text-lg font-medium text-white">Materials</h3>
+
             <div className="space-y-2">
-              <Label className="text-sm font-medium text-slate-200">Upper Material</Label>
-              <Select 
-                value={config.material} 
-                onValueChange={(value: any) => updateConfig({ material: value })}
+              <Label className="text-sm font-medium text-slate-200">Frame Material</Label>
+              <Select
+                value={config.frameMaterial}
+                onValueChange={(value: any) => updateConfig({ frameMaterial: value })}
               >
                 <SelectTrigger className="bg-slate-600 border-slate-500 text-white">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent className="bg-slate-700 border-slate-600">
-                  {materialOptions.map((material) => (
-                    <SelectItem 
-                      key={material.value} 
+                  {frameMaterialOptions.map((material) => (
+                    <SelectItem
+                      key={material.value}
                       value={material.value}
                       className="text-white hover:bg-slate-600"
                     >
                       {material.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="space-y-2">
+              <Label className="text-sm font-medium text-slate-200">Cushion Material</Label>
+              <Select
+                value={config.cushionMaterial}
+                onValueChange={(value: any) => updateConfig({ cushionMaterial: value })}
+              >
+                <SelectTrigger className="bg-slate-600 border-slate-500 text-white">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent className="bg-slate-700 border-slate-600">
+                  {cushionMaterialOptions.map((material) => (
+                    <SelectItem
+                      key={material.value}
+                      value={material.value}
+                      className="text-white hover:bg-slate-600"
+                    >
+                      {material.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="space-y-2">
+              <Label className="text-sm font-medium text-slate-200">Pillow Material</Label>
+              <Select
+                value={config.pillowMaterial}
+                onValueChange={(value: any) => updateConfig({ pillowMaterial: value })}
+              >
+                <SelectTrigger className="bg-slate-600 border-slate-500 text-white">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent className="bg-slate-700 border-slate-600">
+                  {pillowMaterialOptions.map((material) => (
+                    <SelectItem
+                      key={material.value}
+                      value={material.value}
+                      className="text-white hover:bg-slate-600"
+                    >
+                      {material.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+        </Card>
+
+        {/* Sofa Type */}
+        <Card className="bg-slate-700/50 border-slate-600 p-4">
+          <div className="space-y-4">
+            <h3 className="text-lg font-medium text-white">Sofa Type</h3>
+            <div className="space-y-2">
+              <Label className="text-sm font-medium text-slate-200">Model</Label>
+              <Select
+                value={config.sofaType}
+                onValueChange={(value: any) => updateConfig({ sofaType: value })}
+              >
+                <SelectTrigger className="bg-slate-600 border-slate-500 text-white">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent className="bg-slate-700 border-slate-600">
+                  {sofaTypeOptions.map((sofa) => (
+                    <SelectItem
+                      key={sofa.value}
+                      value={sofa.value}
+                      className="text-white hover:bg-slate-600"
+                    >
+                      {sofa.name}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -149,8 +267,8 @@ export function ConfigurationPanel({ config, onConfigChange }: ConfigurationPane
             <h3 className="text-lg font-medium text-white">Environment</h3>
             <div className="space-y-2">
               <Label className="text-sm font-medium text-slate-200">Lighting</Label>
-              <Select 
-                value={config.environment} 
+              <Select
+                value={config.environment}
                 onValueChange={(value: any) => updateConfig({ environment: value })}
               >
                 <SelectTrigger className="bg-slate-600 border-slate-500 text-white">
@@ -158,8 +276,8 @@ export function ConfigurationPanel({ config, onConfigChange }: ConfigurationPane
                 </SelectTrigger>
                 <SelectContent className="bg-slate-700 border-slate-600">
                   {environmentOptions.map((env) => (
-                    <SelectItem 
-                      key={env.value} 
+                    <SelectItem
+                      key={env.value}
                       value={env.value}
                       className="text-white hover:bg-slate-600"
                     >
@@ -174,7 +292,7 @@ export function ConfigurationPanel({ config, onConfigChange }: ConfigurationPane
 
         {/* Actions */}
         <div className="space-y-3">
-          <Button 
+          <Button
             onClick={resetConfiguration}
             variant="outline"
             className="w-full bg-slate-700 border-slate-600 text-white hover:bg-slate-600"
@@ -183,7 +301,7 @@ export function ConfigurationPanel({ config, onConfigChange }: ConfigurationPane
             Reset Configuration
           </Button>
 
-          <Button 
+          <Button
             className="w-full bg-blue-600 hover:bg-blue-700 text-white"
           >
             <Download className="w-4 h-4 mr-2" />
@@ -195,11 +313,14 @@ export function ConfigurationPanel({ config, onConfigChange }: ConfigurationPane
         <Card className="bg-slate-700/30 border-slate-600 p-4">
           <h4 className="text-sm font-medium text-slate-200 mb-2">Current Configuration</h4>
           <div className="text-xs text-slate-400 space-y-1">
-            <div>Material: {config.material}</div>
+            <div>Frame: {config.frameMaterial}</div>
+            <div>Cushions: {config.cushionMaterial}</div>
+            <div>Pillows: {config.pillowMaterial}</div>
             <div>Environment: {config.environment}</div>
-            <div>Upper: {config.upperColor}</div>
-            <div>Sole: {config.soleColor}</div>
-            <div>Laces: {config.lacesColor}</div>
+            <div>Type: {config.sofaType}</div>
+            <div>Frame: {config.frameColor}</div>
+            <div>Cushions: {config.cushionColor}</div>
+            <div>Pillows: {config.pillowsColor}</div>
           </div>
         </Card>
       </div>
