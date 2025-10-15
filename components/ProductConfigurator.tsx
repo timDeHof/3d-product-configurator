@@ -7,6 +7,7 @@ import { ConfigurationPanel } from './ConfigurationPanel';
 import { ProductModel } from './ProductModel';
 import { LoadingSpinner } from './LoadingSpinner';
 import { Header } from './Header';
+import { Footer } from './Footer';
 import { type Settings } from './SettingsPanel';
 import { AlertCircle } from 'lucide-react';
 
@@ -206,6 +207,7 @@ export function ProductConfigurator() {
         />
       )}
       </div>
+      <Footer />
     </div>
   );
 }
