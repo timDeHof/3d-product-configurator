@@ -1,1 +1,6 @@
+name = "3d-product-configurator"
+compatibility_date = "2023-10-15"
+compatibility_flags = ["nodejs_compat"]
+
+[env.production]
 compatibility_flags = ["nodejs_compat"]
